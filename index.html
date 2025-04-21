@@ -6,6 +6,8 @@
   <title>Қаржы калькуляторы</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+
   <style>
     .tabs {
       display: flex;
@@ -64,7 +66,35 @@
 
       <button onclick="calculateLoan()">Есептеу</button>
 
-      <div id="loanResult" class="result-card bounce-in" style="display: none;"></div>
+      <!-- HTML: внутри <div id="loanResult" ...> -->
+<div id="loanResult" class="result-card bounce-in" style="display: none;">
+  <h3>Нәтиже:</h3>
+  <div id="loanSummary"></div>
+
+  <!-- Контролы -->
+  <div id="loanControls" style="margin: 15px 0; display: flex; gap: 10px;">
+    <button id="exportBtn">💾 Скачать Excel</button>
+    <button id="printBtn">🖨 Печать графика</button>
+    <button id="toggleBtn">🔽 Скрыть расписание</button>
+  </div>
+
+  <!-- Таблица -->
+  <h4>📅 Төлем кестесі:</h4>
+  <table id="paymentSchedule" style="width:100%; border-collapse: collapse; margin-top:10px;">
+    <thead>
+      <tr>
+        <th style="border-bottom:1px solid #999; padding:4px;">Ай</th>
+        <th style="border-bottom:1px solid #999; padding:4px;">Күні</th>
+        <th style="border-bottom:1px solid #999; padding:4px;">Төлем</th>
+        <th style="border-bottom:1px solid #999; padding:4px;">Пайыз</th>
+        <th style="border-bottom:1px solid #999; padding:4px;">Негізгі қарыз</th>
+        <th style="border-bottom:1px solid #999; padding:4px;">Қалған қарыз</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
     </div>
 
     <!-- Депозит калькуляторы -->
@@ -177,6 +207,7 @@
 
     setTheme(localStorage.getItem('theme') || 'light');
   </script>
+  <script src="script.js"></script>
 
 </body>
 </html>
