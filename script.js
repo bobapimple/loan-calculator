@@ -1,161 +1,107 @@
-// JS: замените старую функцию calculateLoan() на эту
-function calculateLoan() {
-    const P = parseFloat(document.getElementById('loanAmount').value);
-    const i = parseFloat(document.getElementById('loanRate').value) / 100 / 12;
-    const n = parseInt(document.getElementById('loanMonths').value);
-    const income = parseFloat(document.getElementById('income').value);
-    const expenses = parseFloat(document.getElementById('expenses').value);
+function switchTab(tab) {
+    document.getElementById('loan').style.display = tab === 'loan' ? 'block' : 'none';
+    document.getElementById('deposit').style.display = tab === 'deposit' ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+  }
   
-    const A = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
-    const totalPaid = A * n;
-    const overpaid = totalPaid - P;
+  function calculateLoan() {
+    const P = +document.getElementById('loanAmount').value;
+    const i = +document.getElementById('loanRate').value / 100 / 12;
+    const n = +document.getElementById('loanMonths').value;
+    const income = +document.getElementById('income').value;
   
-    let advice = "";
-    if (A > income / 2) {
-      advice += "💡 Ай сайынғы төлем табысыңыздың жартысынан көп. Қысқа мерзімнен аулақ болыңыз. ";
-    }
-    if ((overpaid / P) > 0.3) {
-      advice += "📉 Пайыздық артық төлем жоғары. Басқа ұсыныстарды қарастырған жөн.";
-    }
-    if (!advice) {
-      advice = "✅ Несиелік шарттар сіздің табысыңызға сәйкес келеді.";
-    }
+    const A = P * i * Math.pow(1 + i, n) / (Math.pow(1 + i, n) - 1);
+    const total = A * n;
+    const overpaid = total - P;
+    let advice = A > income / 2
+      ? "💡 Ай сайынғы төлем табысыңыздың жартысынан көп."
+      : overpaid / P > 0.3
+      ? "📉 Пайыздық артық төлем жоғары."
+      : "✅ Несиелік шарттар сәйкес келеді.";
   
-    // Резюме
     document.getElementById('loanSummary').innerHTML = `
       <p>📆 Ай сайынғы төлем: <strong>${A.toFixed(2)} ₸</strong></p>
-      <p>💵 Жалпы төленетін сома: <strong>${totalPaid.toFixed(2)} ₸</strong></p>
+      <p>💵 Жалпы төлем: <strong>${total.toFixed(2)} ₸</strong></p>
       <p>📈 Артық төлем: <strong>${overpaid.toFixed(2)} ₸</strong></p>
-      <div class="advice">🧠 Кеңес: ${advice}</div>
+      <div class="advice">${advice}</div>
     `;
-  
-    // Заполняем таблицу
     const tbody = document.querySelector("#paymentSchedule tbody");
     tbody.innerHTML = "";
-    let remaining = P;
-    const today = new Date();
-  
-    for (let month = 1; month <= n; month++) {
-      const interest = remaining * i;
-      const principal = A - interest;
-      remaining -= principal;
-  
-      const payDate = new Date(today.getFullYear(), today.getMonth() + month, today.getDate());
-      const dateStr = payDate.toLocaleDateString('kk-KZ');
-  
-      tbody.innerHTML += `
-        <tr>
-          <td style="padding:4px; border-bottom:1px solid #eee;">${month}</td>
-          <td style="padding:4px; border-bottom:1px solid #eee;">${dateStr}</td>
-          <td style="padding:4px; border-bottom:1px solid #eee;">${A.toFixed(2)}</td>
-          <td style="padding:4px; border-bottom:1px solid #eee;">${interest.toFixed(2)}</td>
-          <td style="padding:4px; border-bottom:1px solid #eee;">${principal.toFixed(2)}</td>
-          <td style="padding:4px; border-bottom:1px solid #eee;">${remaining>0?remaining.toFixed(2):"0.00"}</td>
-        </tr>
-      `;
+    let remain = P;
+    const now = new Date();
+    for (let m = 1; m <= n; m++) {
+      const int = remain * i;
+      const prin = A - int;
+      remain -= prin;
+      const date = new Date(now.getFullYear(), now.getMonth() + m, now.getDate()).toLocaleDateString('kk-KZ');
+      tbody.innerHTML += `<tr><td>${m}</td><td>${date}</td><td>${A.toFixed(2)}</td><td>${int.toFixed(2)}</td><td>${prin.toFixed(2)}</td><td>${remain.toFixed(2)}</td></tr>`;
     }
-  
-    // Показываем блок
-    const loanResult = document.getElementById('loanResult');
-    loanResult.style.display = 'block';
-  
-    // Навешиваем контролы (чтобы не дублировались, удаляем старые)
-    setupLoanControls();
-  }
-  
-  // Навешиваем действия на кнопки
-  function setupLoanControls() {
-    // экспорт в CSV/Excel
+    document.getElementById('loanResult').style.display = 'block';
     document.getElementById('exportBtn').onclick = exportSchedule;
-    // печать
-    document.getElementById('printBtn').onclick = printSchedule;
-    // скрыть/показать
-    const toggleBtn = document.getElementById('toggleBtn');
-    toggleBtn.onclick = toggleSchedule;
+    document.getElementById('printBtn').onclick = () => printTable('paymentSchedule');
+    document.getElementById('toggleBtn').onclick = () => toggleTable('paymentSchedule', 'toggleBtn');
   }
   
-  // Функция экспорта в CSV с улучшенным форматированием
+  function calculateDeposit() {
+    const P = +document.getElementById('depositAmount').value;
+    const rate = +document.getElementById('depositRate').value / 100 / 12;
+    const months = +document.getElementById('depositMonths').value;
+    const monthly = +document.getElementById('monthlyAddition').value;
+  
+    let balance = P, profit = 0;
+    const tbody = document.querySelector("#depositSchedule tbody");
+    tbody.innerHTML = "";
+    const now = new Date();
+    for (let m = 1; m <= months; m++) {
+      const int = balance * rate;
+      balance += int + monthly;
+      profit += int;
+      const date = new Date(now.getFullYear(), now.getMonth() + m, now.getDate()).toLocaleDateString('kk-KZ');
+      tbody.innerHTML += `<tr><td>${m}</td><td>${date}</td><td>${monthly.toFixed(2)}</td><td>${int.toFixed(2)}</td><td>${balance.toFixed(2)}</td></tr>`;
+    }
+    document.getElementById('depositSummary').innerHTML = `
+      <p>📊 Болашақ сома: <strong>${balance.toFixed(2)} ₸</strong></p>
+      <p>💰 Таза табыс: <strong>${profit.toFixed(2)} ₸</strong></p>
+    `;
+    document.getElementById('depositResult').style.display = 'block';
+    document.getElementById('exportDepositBtn').onclick = () => exportExcel("depositSchedule", "deposit.xlsx");
+    document.getElementById('printDepositBtn').onclick = () => printTable("depositSchedule");
+    document.getElementById('toggleDepositBtn').onclick = () => toggleTable("depositSchedule", "toggleDepositBtn");
+  }
+  
   function exportSchedule() {
-    const table = document.getElementById('paymentSchedule');
+    exportExcel("paymentSchedule", "loan.xlsx");
+  }
   
-    // Преобразуем HTML-таблицу в sheet
-    const ws = XLSX.utils.table_to_sheet(table, { raw: false });
-  
-    const range = XLSX.utils.decode_range(ws['!ref']);
-    const headerStyle = {
-      font: { bold: true, color: { rgb: "FFFFFF" } },
-      fill: { fgColor: { rgb: "4CAF50" } },
-      alignment: { horizontal: "center", vertical: "center" }
-    };
-    const cellStyle = {
-      alignment: { horizontal: "center" }
-    };
-  
-    // Стили шапки (первая строка)
-    for (let C = range.s.c; C <= range.e.c; ++C) {
-      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
-      if (!ws[cellAddress]) continue;
-      ws[cellAddress].s = headerStyle;
-    }
-  
-    // Применим стиль выравнивания и формат чисел
-    for (let R = 1; R <= range.e.r; ++R) {
-      for (let C = 0; C <= range.e.c; ++C) {
-        const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
-        if (!cell) continue;
-        cell.s = cellStyle;
-  
-        // Формат чисел — разделение тысяч
-        if (!isNaN(cell.v) && typeof cell.v === "number") {
-          cell.z = "#,##0.00";
-        }
-      }
-    }
-  
-    // Автоширина
-    const colWidths = [];
-    for (let C = range.s.c; C <= range.e.c; ++C) {
-      let maxLen = 10;
-      for (let R = range.s.r; R <= range.e.r; ++R) {
-        const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
-        if (cell && cell.v) {
-          const len = cell.v.toString().length;
-          if (len > maxLen) maxLen = len;
-        }
-      }
-      colWidths.push({ wch: maxLen + 2 });
-    }
-    ws['!cols'] = colWidths;
-  
-    // Создание книги и экспорт
+  function exportExcel(tableId, filename) {
+    const table = document.getElementById(tableId);
+    const ws = XLSX.utils.table_to_sheet(table);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Төлем кестесі');
-    XLSX.writeFile(wb, 'Tolem_kestesi.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, filename);
   }
   
-   
-  
-  
-  
-  // Функция печати только расписания
-  function printSchedule() {
-    const tableHTML = document.getElementById('paymentSchedule').outerHTML;
-    const newWin = window.open('', '', 'width=800,height=600');
-    newWin.document.write(`<html><head><title>Печать графика</title></head><body>${tableHTML}</body></html>`);
-    newWin.document.close();
-    newWin.focus();
-    newWin.print();
-    newWin.close();
+  function printTable(id) {
+    const html = document.getElementById(id).outerHTML;
+    const win = window.open();
+    win.document.write(`<html><body>${html}</body></html>`);
+    win.document.close();
+    win.print();
   }
   
-  // Функция скрыть/показать расписание
-  let scheduleVisible = true;
-  function toggleSchedule() {
-    const tbody = document.querySelector('#paymentSchedule');
-    scheduleVisible = !scheduleVisible;
-    tbody.style.display = scheduleVisible ? 'table' : 'none';
-    document.getElementById('toggleBtn').innerText = scheduleVisible
-      ? '🔽 Скрыть расписание'
-      : '🔼 Показать расписание';
+  function toggleTable(id, btnId) {
+    const table = document.getElementById(id);
+    table.style.display = table.style.display === "none" ? "table" : "none";
+    document.getElementById(btnId).innerText = table.style.display === "none" ? "🔼 Показать" : "🔽 Скрыть";
   }
+  
+  document.getElementById("themeToggle").onclick = () => {
+    const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    document.getElementById("themeToggle").innerHTML = theme === "dark" ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+  };
+  
+  document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
   

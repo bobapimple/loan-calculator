@@ -3,8 +3,12 @@
   --card-bg: #ffffff;
   --text-color: #222;
   --accent: #00bfa5;
+  --accent-hover: #00a58e;
   --advice-bg: #eef6ff;
   --advice-color: #0077cc;
+  --shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+  --card-gradient: linear-gradient(135deg, #ffffff 0%, #f0fdfd 100%);
+  --pulse-color: rgba(0, 191, 165, 0.4);
 }
 
 [data-theme='dark'] {
@@ -12,13 +16,17 @@
   --card-bg: #1e1e1e;
   --text-color: #eaeaea;
   --accent: #64ffda;
+  --accent-hover: #52e6c4;
   --advice-bg: #1e2a34;
   --advice-color: #80d8ff;
+  --shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+  --card-gradient: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
+  --pulse-color: rgba(100, 255, 218, 0.4);
 }
 
 * {
   box-sizing: border-box;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 body {
@@ -27,46 +35,129 @@ body {
   color: var(--text-color);
   padding: 40px 20px;
   margin: 0;
+  min-height: 100vh;
+  transition: background-color 0.5s ease;
 }
 
 .container {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
+  animation: fadeInUp 0.8s ease;
 }
 
 .tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   gap: 10px;
+  position: relative;
 }
 
 .tab-btn {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
   background: #ccc;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: bold;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  z-index: -1;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+}
+
+.tab-btn i {
+  margin-right: 6px;
+  transition: transform 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: #bbb;
+  transform: translateY(-2px);
+}
+
+.tab-btn:hover i {
+  transform: scale(1.1);
 }
 
 .tab-btn.active {
-  background: var(--accent);
   color: white;
+  box-shadow: 0 4px 15px rgba(0, 191, 165, 0.4);
+  transform: translateY(-2px);
+}
+
+.tab-btn.active::after {
+  transform: scaleY(1);
 }
 
 .card {
-  background-color: var(--card-bg);
+  background: var(--card-gradient);
   border-radius: 16px;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   padding: 30px;
   margin-bottom: 30px;
+  animation: fadeIn 0.8s ease;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card h2, .card h3 {
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--pulse-color) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card:hover::before {
+  opacity: 0.6;
+  animation: pulse 4s infinite linear;
+}
+
+.card h2, .card h3, .card h4 {
   text-align: center;
-  margin-bottom: 20px;
   color: var(--accent);
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.card h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 3px;
 }
 
 label {
@@ -74,6 +165,12 @@ label {
   margin-bottom: 6px;
   font-weight: 600;
   font-size: 15px;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+label:hover {
+  transform: translateY(-2px);
 }
 
 input[type="number"] {
@@ -85,10 +182,11 @@ input[type="number"] {
   font-size: 16px;
   background-color: #fff;
   color: #000;
+  transition: all 0.3s ease, box-shadow 0.3s ease;
 }
 
 [data-theme='dark'] input[type="number"] {
-  background-color: #333;
+  background-color: #2a2a2a;
   color: #eee;
   border: 1px solid #555;
 }
@@ -96,6 +194,7 @@ input[type="number"] {
 input[type="number"]:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.2);
+  transform: scale(1.01);
 }
 
 button {
@@ -108,15 +207,39 @@ button {
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
 }
 
 button:hover {
-  opacity: 0.9;
+  transform: translateY(-3px);
+  background-color: var(--accent-hover);
+  box-shadow: 0 6px 15px rgba(0, 191, 165, 0.4);
+}
+
+button:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
 }
 
 .result p {
   font-size: 16px;
   margin: 12px 0;
+  animation: fadeIn 0.5s ease;
 }
 
 .advice {
@@ -124,9 +247,10 @@ button:hover {
   color: var(--advice-color);
   background-color: var(--advice-bg);
   font-weight: 600;
-  padding: 12px;
-  border-left: 5px solid var(--advice-color);
+  padding: 14px;
+  border-left: 6px solid var(--advice-color);
   border-radius: 6px;
+  animation: slideIn 0.5s ease;
 }
 
 .theme-toggle {
@@ -143,24 +267,112 @@ button:hover {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   z-index: 999;
+  transition: all 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.fade-in { animation: fadeIn 1s ease-in-out; }
-.slide-up { animation: slideUp 1s ease-in-out; }
-.bounce-in { animation: bounceIn 0.6s ease-in-out; }
+.theme-toggle:hover {
+  transform: rotate(15deg) scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  animation: fadeIn 0.8s ease;
+}
+
+thead th {
+  background: var(--accent);
+  color: white;
+  padding: 12px;
+  position: sticky;
+  top: 0;
+  transition: all 0.3s ease;
+}
+
+td, th {
+  text-align: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  transition: background-color 0.3s ease;
+}
+
+tr:hover td {
+  background-color: rgba(0, 191, 165, 0.1);
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideUp {
-  from { transform: translateY(50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes bounceIn {
-  0% { transform: scale(0.8); opacity: 0; }
-  60% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(1); }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(25, 25);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(40, 40);
+  }
+}
+
+/* Floating animation for decorative elements */
+.floating {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Bounce animation */
+.bounce {
+  animation: bounce 0.5s alternate infinite;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
 }
