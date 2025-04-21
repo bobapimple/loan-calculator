@@ -3,50 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Несие калькуляторы</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Қаржы калькуляторы</title>
+  <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+      gap: 10px;
+    }
+    .tab-btn {
+      padding: 10px 20px;
+      border: none;
+      background: #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .tab-btn.active {
+      background: #4caf50;
+      color: white;
+    }
+    .card {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- 🌗 Theme toggle button -->
+  <!-- Theme Toggle -->
   <button id="themeToggle" class="theme-toggle">
     <i class="fas fa-moon"></i>
   </button>
 
   <div class="container fade-in">
-    <div class="card slide-up">
-      <h2><i class="fas fa-calculator"></i> Несие калькуляторы</h2>
-
-      <label><i class="fas fa-money-bill-wave"></i> Несие сомасы (₸)</label>
-      <input type="number" id="loanAmount" value="1000000" />
-
-      <label><i class="fas fa-percent"></i> Жылдық пайыз (%)</label>
-      <input type="number" id="interestRate" value="20" />
-
-      <label><i class="fas fa-clock"></i> Мерзім (ай)</label>
-      <input type="number" id="months" value="12" />
-
-      <label><i class="fas fa-wallet"></i> Айлық табыс (₸)</label>
-      <input type="number" id="income" value="500000" />
-
-      <label><i class="fas fa-receipt"></i> Айлық шығын (₸)</label>
-      <input type="number" id="expenses" value="200000" />
-
-      <button onclick="calculateLoan()"><i class="fas fa-equals"></i> Есептеу</button>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('loan')"><i class="fas fa-money-check-alt"></i> Кредит</button>
+      <button class="tab-btn" onclick="switchTab('deposit')"><i class="fas fa-piggy-bank"></i> Депозит</button>
     </div>
 
-    <div id="resultContainer" class="card result-card bounce-in" style="display: none;">
-      <h3><i class="fas fa-chart-line"></i> Нәтиже:</h3>
-      <div class="result" id="resultText"></div>
+    <!-- Кредит калькуляторы -->
+    <div id="loan" class="card slide-up">
+      <h2><i class="fas fa-calculator"></i> Несие калькуляторы</h2>
+      <label>Несие сомасы (₸)</label>
+      <input type="number" id="loanAmount" value="1000000" />
+
+      <label>Жылдық пайыз (%)</label>
+      <input type="number" id="loanRate" value="20" />
+
+      <label>Мерзім (ай)</label>
+      <input type="number" id="loanMonths" value="12" />
+
+      <label>Айлық табыс (₸)</label>
+      <input type="number" id="income" value="500000" />
+
+      <label>Айлық шығын (₸)</label>
+      <input type="number" id="expenses" value="200000" />
+
+      <button onclick="calculateLoan()">Есептеу</button>
+
+      <div id="loanResult" class="result-card bounce-in" style="display: none;"></div>
+    </div>
+
+    <!-- Депозит калькуляторы -->
+    <div id="deposit" class="card slide-up" style="display: none;">
+      <h2><i class="fas fa-calculator"></i> Депозит калькуляторы</h2>
+      <label>Салым сомасы (₸)</label>
+      <input type="number" id="depositAmount" value="1000000" />
+
+      <label>Жылдық пайыз (%)</label>
+      <input type="number" id="depositRate" value="10" />
+
+      <label>Мерзім (ай)</label>
+      <input type="number" id="depositMonths" value="12" />
+
+      <label>Ай сайынғы қосымша салым (₸)</label>
+      <input type="number" id="monthlyAddition" value="0" />
+
+      <button onclick="calculateDeposit()">Есептеу</button>
+
+      <div id="depositResult" class="result-card bounce-in" style="display: none;"></div>
     </div>
   </div>
 
   <script>
+    function switchTab(tab) {
+      document.getElementById('loan').style.display = tab === 'loan' ? 'block' : 'none';
+      document.getElementById('deposit').style.display = tab === 'deposit' ? 'block' : 'none';
+
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+    }
+
     function calculateLoan() {
       const P = parseFloat(document.getElementById('loanAmount').value);
-      const i = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
-      const n = parseInt(document.getElementById('months').value);
+      const i = parseFloat(document.getElementById('loanRate').value) / 100 / 12;
+      const n = parseInt(document.getElementById('loanMonths').value);
       const income = parseFloat(document.getElementById('income').value);
       const expenses = parseFloat(document.getElementById('expenses').value);
 
@@ -65,16 +119,46 @@
         advice = "✅ Несиелік шарттар сіздің табысыңызға сәйкес келеді.";
       }
 
-      document.getElementById('resultText').innerHTML = `
+      document.getElementById('loanResult').style.display = 'block';
+      document.getElementById('loanResult').innerHTML = `
+        <h3>Нәтиже:</h3>
         <p>📆 Ай сайынғы төлем: <strong>${A.toFixed(2)} ₸</strong></p>
         <p>💵 Жалпы төленетін сома: <strong>${totalPaid.toFixed(2)} ₸</strong></p>
-        <p>📈 Артық төлем (пайыз): <strong>${overpaid.toFixed(2)} ₸</strong></p>
+        <p>📈 Артық төлем: <strong>${overpaid.toFixed(2)} ₸</strong></p>
         <div class="advice">🧠 Кеңес: ${advice}</div>
       `;
-      document.getElementById('resultContainer').style.display = 'block';
     }
 
-    // 🌙 Theme toggle logic
+    function calculateDeposit() {
+      const P = parseFloat(document.getElementById('depositAmount').value);
+      const annualRate = parseFloat(document.getElementById('depositRate').value);
+      const n = parseInt(document.getElementById('depositMonths').value);
+      const monthlyAdd = parseFloat(document.getElementById('monthlyAddition').value);
+
+      const i = annualRate / 100 / 12;
+      let futureValue = P * Math.pow(1 + i, n);
+
+      for (let t = 1; t <= n; t++) {
+        futureValue += monthlyAdd * Math.pow(1 + i, n - t);
+      }
+
+      const totalInvested = P + (monthlyAdd * n);
+      const profit = futureValue - totalInvested;
+
+      let advice = profit / totalInvested > 0.1
+        ? "✅ Салым жақсы табыс әкеледі."
+        : "💡 Таза табыс төмен. Жоғары пайызды депозиттерді қарастыруға болады.";
+
+      document.getElementById('depositResult').style.display = 'block';
+      document.getElementById('depositResult').innerHTML = `
+        <h3>Нәтиже:</h3>
+        <p>📊 Болашақ сома: <strong>${futureValue.toFixed(2)} ₸</strong></p>
+        <p>💰 Таза табыс: <strong>${profit.toFixed(2)} ₸</strong></p>
+        <div class="advice">🧠 Кеңес: ${advice}</div>
+      `;
+    }
+
+    // Theme toggle logic
     const toggle = document.getElementById('themeToggle');
     const root = document.documentElement;
 
@@ -91,9 +175,7 @@
       setTheme(current === 'dark' ? 'light' : 'dark');
     });
 
-    // Initial load
-    const saved = localStorage.getItem('theme') || 'light';
-    setTheme(saved);
+    setTheme(localStorage.getItem('theme') || 'light');
   </script>
 
 </body>

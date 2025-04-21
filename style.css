@@ -1,157 +1,166 @@
 :root {
-    --bg-color: #f0fdfd;
-    --card-bg: #ffffff;
-    --text-color: #222;
-    --accent: #00bfa5;
-    --advice-bg: #eef6ff;
-    --advice-color: #0077cc;
-  }
-  
-  [data-theme='dark'] {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-color: #eaeaea;
-    --accent: #64ffda;
-    --advice-bg: #1e2a34;
-    --advice-color: #80d8ff;
-  }
-  
-  /* Reset and base */
-  * {
-    box-sizing: border-box;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    padding: 40px 20px;
-    margin: 0;
-  }
-  
-  .container {
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  
-  .card {
-    background-color: var(--card-bg);
-    border-radius: 16px;
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    margin-bottom: 30px;
-  }
-  
-  .card h2, .card h3 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: var(--accent);
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    font-size: 15px;
-  }
-  
-  input[type="number"] {
-    width: 100%;
-    padding: 12px 14px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    background-color: #fff;
-    color: #000;
-  }
-  
-  [data-theme='dark'] input[type="number"] {
-    background-color: #333;
-    color: #eee;
-    border: 1px solid #555;
-  }
-  
-  input[type="number"]:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.2);
-  }
-  
-  button {
-    width: 100%;
-    padding: 14px;
-    background-color: var(--accent);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    opacity: 0.9;
-  }
-  
-  .result p {
-    font-size: 16px;
-    margin: 12px 0;
-  }
-  
-  .advice {
-    margin-top: 20px;
-    color: var(--advice-color);
-    background-color: var(--advice-bg);
-    font-weight: 600;
-    padding: 12px;
-    border-left: 5px solid var(--advice-color);
-    border-radius: 6px;
-  }
-  
-  /* Theme toggle button */
-  .theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--card-bg);
-    color: var(--text-color);
-    border: none;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    z-index: 999;
-  }
-  
-  /* Animations */
-  .fade-in {
-    animation: fadeIn 1s ease-in-out;
-  }
-  
-  .slide-up {
-    animation: slideUp 1s ease-in-out;
-  }
-  
-  .bounce-in {
-    animation: bounceIn 0.6s ease-in-out;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes slideUp {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  
-  @keyframes bounceIn {
-    0% { transform: scale(0.8); opacity: 0; }
-    60% { transform: scale(1.05); opacity: 1; }
-    100% { transform: scale(1); }
-  }
-  
+  --bg-color: #f0fdfd;
+  --card-bg: #ffffff;
+  --text-color: #222;
+  --accent: #00bfa5;
+  --advice-bg: #eef6ff;
+  --advice-color: #0077cc;
+}
+
+[data-theme='dark'] {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --text-color: #eaeaea;
+  --accent: #64ffda;
+  --advice-bg: #1e2a34;
+  --advice-color: #80d8ff;
+}
+
+* {
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 40px 20px;
+  margin: 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  gap: 10px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background: #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+.card h2, .card h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--accent);
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #fff;
+  color: #000;
+}
+
+[data-theme='dark'] input[type="number"] {
+  background-color: #333;
+  color: #eee;
+  border: 1px solid #555;
+}
+
+input[type="number"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.2);
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.result p {
+  font-size: 16px;
+  margin: 12px 0;
+}
+
+.advice {
+  margin-top: 20px;
+  color: var(--advice-color);
+  background-color: var(--advice-bg);
+  font-weight: 600;
+  padding: 12px;
+  border-left: 5px solid var(--advice-color);
+  border-radius: 6px;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.fade-in { animation: fadeIn 1s ease-in-out; }
+.slide-up { animation: slideUp 1s ease-in-out; }
+.bounce-in { animation: bounceIn 0.6s ease-in-out; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
+}
