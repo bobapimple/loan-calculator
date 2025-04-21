@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Несие калькуляторы</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- 🌗 Theme toggle button -->
+  <button id="themeToggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <div class="container fade-in">
+    <div class="card slide-up">
+      <h2><i class="fas fa-calculator"></i> Несие калькуляторы</h2>
+
+      <label><i class="fas fa-money-bill-wave"></i> Несие сомасы (₸)</label>
+      <input type="number" id="loanAmount" value="1000000" />
+
+      <label><i class="fas fa-percent"></i> Жылдық пайыз (%)</label>
+      <input type="number" id="interestRate" value="20" />
+
+      <label><i class="fas fa-clock"></i> Мерзім (ай)</label>
+      <input type="number" id="months" value="12" />
+
+      <label><i class="fas fa-wallet"></i> Айлық табыс (₸)</label>
+      <input type="number" id="income" value="500000" />
+
+      <label><i class="fas fa-receipt"></i> Айлық шығын (₸)</label>
+      <input type="number" id="expenses" value="200000" />
+
+      <button onclick="calculateLoan()"><i class="fas fa-equals"></i> Есептеу</button>
+    </div>
+
+    <div id="resultContainer" class="card result-card bounce-in" style="display: none;">
+      <h3><i class="fas fa-chart-line"></i> Нәтиже:</h3>
+      <div class="result" id="resultText"></div>
+    </div>
+  </div>
+
+  <script>
+    function calculateLoan() {
+      const P = parseFloat(document.getElementById('loanAmount').value);
+      const i = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+      const n = parseInt(document.getElementById('months').value);
+      const income = parseFloat(document.getElementById('income').value);
+      const expenses = parseFloat(document.getElementById('expenses').value);
+
+      const A = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+      const totalPaid = A * n;
+      const overpaid = totalPaid - P;
+
+      let advice = "";
+      if (A > income / 2) {
+        advice += "💡 Ай сайынғы төлем табысыңыздың жартысынан көп. Қысқа мерзімнен аулақ болыңыз. ";
+      }
+      if ((overpaid / P) > 0.3) {
+        advice += "📉 Пайыздық артық төлем жоғары. Басқа ұсыныстарды қарастырған жөн.";
+      }
+      if (advice === "") {
+        advice = "✅ Несиелік шарттар сіздің табысыңызға сәйкес келеді.";
+      }
+
+      document.getElementById('resultText').innerHTML = `
+        <p>📆 Ай сайынғы төлем: <strong>${A.toFixed(2)} ₸</strong></p>
+        <p>💵 Жалпы төленетін сома: <strong>${totalPaid.toFixed(2)} ₸</strong></p>
+        <p>📈 Артық төлем (пайыз): <strong>${overpaid.toFixed(2)} ₸</strong></p>
+        <div class="advice">🧠 Кеңес: ${advice}</div>
+      `;
+      document.getElementById('resultContainer').style.display = 'block';
+    }
+
+    // 🌙 Theme toggle logic
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+
+    function setTheme(theme) {
+      root.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      toggle.innerHTML = theme === 'dark'
+        ? '<i class="fas fa-sun"></i>'
+        : '<i class="fas fa-moon"></i>';
+    }
+
+    toggle.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // Initial load
+    const saved = localStorage.getItem('theme') || 'light';
+    setTheme(saved);
+  </script>
+
+</body>
+</html>
