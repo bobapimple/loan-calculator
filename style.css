@@ -1,7 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
+.header-logo {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 10px;
+}
+
+.header-logo img {
+  max-width: 200px; /* было 200px */
+  width: 100%;       /* добавлено для адаптивности */
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 191, 165, 0.3));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.header-logo img:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 6px 12px rgba(0, 191, 165, 0.4));
+}
+
+
 :root {
-  --bg-light: #e6f7ff;
+  --bg-light: #d0f0ff;
   --bg-dark: #121212;
   --text-light: #000;
   --text-dark: #fff;
@@ -322,89 +344,100 @@ tbody td {
   padding: 14px 12px;
   border-top: 1px solid #eee;
   font-size: 15px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s;
 }
 
-[data-theme='dark'] tbody td {
-  border-top: 1px solid #333;
-}
-
-tbody tr:hover {
-  background-color: rgba(0, 191, 165, 0.05);
-}
-
-[data-theme='dark'] tbody tr:hover {
+tbody td:hover {
   background-color: rgba(0, 191, 165, 0.1);
 }
 
-/* Анимации */
-.fade-in {
-  animation: fadeIn 0.5s ease-in;
-}
-
-.slide-up {
-  animation: slideUp 0.5s ease-out;
-}
-
-.bounce-in {
-  animation: bounceIn 0.6s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { 
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes bounceIn {
-  0% { transform: scale(0.9); opacity: 0; }
-  50% { transform: scale(1.05); }
-  80% { transform: scale(0.95); }
-  100% { transform: scale(1); opacity: 1; }
+tbody td:first-child {
+  font-weight: 500;
 }
 
 @keyframes sunPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
+  0% {
+    transform: scale(0.9);
   }
   50% {
     transform: scale(1.05);
-    opacity: 0.9;
+  }
+  100% {
+    transform: scale(0.9);
   }
 }
 
 @keyframes moonGlow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(255,255,255,0.2);
+  0% {
+    transform: scale(0.85);
   }
   50% {
-    box-shadow: 0 0 20px rgba(255,255,255,0.35);
+    transform: scale(1);
   }
-}
-
-@keyframes stars {
-  from { background-position: 0 0; }
-  to { background-position: -10000px 10000px; }
+  100% {
+    transform: scale(0.85);
+  }
 }
 
 @keyframes fadeInUp {
-  0% {
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.cloud-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-repeat: repeat-x;
+  background-position: top;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.2;
+}
+
+.layer1 {
+  background-image: url('data:image/svg+xml;utf8,<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg"><g fill="%23ffffff" opacity="0.6"><ellipse cx="50" cy="50" rx="40" ry="20"/><ellipse cx="90" cy="50" rx="40" ry="25"/><ellipse cx="130" cy="50" rx="30" ry="20"/></g></svg>');
+  background-size: 400px 100px;
+  animation: cloudMove1 120s linear infinite;
+}
+
+.layer2 {
+  background-image: url('data:image/svg+xml;utf8,<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg"><g fill="%23ffffff" opacity="0.4"><ellipse cx="60" cy="60" rx="35" ry="18"/><ellipse cx="100" cy="60" rx="45" ry="25"/></g></svg>');
+  background-size: 300px 100px;
+  animation: cloudMove2 160s linear infinite;
+  top: 20%;
+}
+
+.layer3 {
+  background-image: url('data:image/svg+xml;utf8,<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg"><g fill="%23ffffff" opacity="0.25"><ellipse cx="70" cy="70" rx="30" ry="15"/><ellipse cx="110" cy="70" rx="40" ry="20"/></g></svg>');
+  background-size: 350px 100px;
+  animation: cloudMove3 200s linear infinite;
+  top: 40%;
+}
+
+@keyframes cloudMove1 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes cloudMove2 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-60%); }
+}
+
+@keyframes cloudMove3 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-40%); }
+}
+
+[data-theme="dark"] .cloud-layer {
+  display: none;
 }
