@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Қаржылық есептер</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 850px;
+      margin: auto;
+      padding: 20px;
+    }
+    header {
+      background: linear-gradient(to right, #00bfa5, #00796b);
+      color: white;
+      padding: 30px 0;
+      text-align: center;
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      animation: slideDown 1s ease-out;
+    }
+    .task-card {
+      background-color: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .task-card h3 {
+      margin-top: 0;
+      color: #00bfa5;
+    }
+    button {
+      background-color: #00bfa5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #00796b;
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      color: #00796b;
+      font-weight: bold;
+    }
+    .back-button:hover {
+      text-decoration: underline;
+    }
+    .answer {
+      background-color: #f0fdfc;
+      padding: 10px;
+      border-left: 4px solid #00bfa5;
+      margin-top: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <h1>📚 Қаржылық есептер</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="task-card">
+      <h3>Есеп 1: Несие есептеу</h3>
+      <p>Айгүл 1 000 000 ₸ несие алғысы келеді. 12 айға, 18% жылдықпен. Ай сайынғы төлем қандай болады?</p>
+      <div class="answer" id="loanAnswer">Есептеліп жатыр...</div>
+      <button onclick="applyLoanExample()">Арткы бетке кошу</button>
+    </div>
+
+    <div class="task-card">
+      <h3>Есеп 2: Депозит есептеу</h3>
+      <p>Сіз ай сайын 50 000 ₸ салып, 12 ай бойы 10% жылдықпен жинағыңыз келеді. Соңында қанша болады?</p>
+      <div class="answer" id="depositAnswer">Есептеліп жатыр...</div>
+      <button onclick="applyDepositExample()">Арткы бетке кошу</button>
+    </div>
+
+    <div class="task-card">
+      <h3>Есеп 3: Инвестициялық есеп</h3>
+      <p>Егер сіз 500 000 ₸-ны 5 жылға салсаңыз, жылдық 15% өсіммен, соңында қанша ақша болады?</p>
+      <div class="answer" id="investmentAnswer">Есептеліп жатыр...</div>
+      <button onclick="applyInvestmentExample()">Арткы бетке кошу</button>
+    </div>
+
+    <a href="index.html" class="back-button">← Арткы бетке кошу</a>
+  </div>
+
+  <script>
+    function applyLoanExample() {
+      localStorage.setItem('loanExample', JSON.stringify({
+        amount: 1000000,
+        rate: 18,
+        months: 12
+      }));
+      window.location.href = "index.html#loan";
+    }
+
+    function applyDepositExample() {
+      localStorage.setItem('depositExample', JSON.stringify({
+        amount: 0,
+        rate: 10,
+        months: 12,
+        addition: 50000
+      }));
+      window.location.href = "index.html#deposit";
+    }
+
+    function applyInvestmentExample() {
+      localStorage.setItem('depositExample', JSON.stringify({
+        amount: 500000,
+        rate: 15,
+        months: 60,
+        addition: 0
+      }));
+      window.location.href = "index.html#deposit";
+    }
+
+    // Есеп 1 – Несие (аннуитет формуласы)
+    function calculateLoan(months, amount, annualRate) {
+      let monthlyRate = annualRate / 100 / 12;
+      return (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
+    }
+
+    // Есеп 2 – Ай сайынғы салыммен депозит
+    function calculateDeposit(addition, annualRate, months) {
+      let monthlyRate = annualRate / 100 / 12;
+      let futureValue = addition * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+      return futureValue;
+    }
+
+    // Есеп 3 – Жай пайыз (капиталдау)
+    function calculateInvestment(initial, annualRate, years) {
+      return initial * Math.pow(1 + annualRate / 100, years);
+    }
+
+    // Нәтижелерді көрсету
+    document.addEventListener("DOMContentLoaded", () => {
+      const loanMonthly = calculateLoan(12, 1000000, 18);
+      document.getElementById("loanAnswer").textContent = `Ай сайынғы төлем: ${loanMonthly.toFixed(2)} ₸`;
+
+      const depositTotal = calculateDeposit(50000, 10, 12);
+      document.getElementById("depositAnswer").textContent = `Жинақталған сома: ${depositTotal.toFixed(2)} ₸`;
+
+      const investmentResult = calculateInvestment(500000, 15, 5);
+      document.getElementById("investmentAnswer").textContent = `Инвестиция нәтижесі: ${investmentResult.toFixed(2)} ₸`;
+    });
+  </script>
+
+</body>
+</html>

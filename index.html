@@ -6,178 +6,196 @@
   <title>Қаржы калькуляторы</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="tasks.html">
   <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 </head>
+
 <body>   
 
 <div class="cloud-layer layer1"></div>
 <div class="cloud-layer layer2"></div>
 <div class="cloud-layer layer3"></div>
 
+<div class="header-logo">
+  <img src="img/logo.svg" alt="Aqbobek Lyesum логотипі">
+</div>
 
-    
-    <div class="header-logo">
-      <img src="img/logo.svg" alt="Aqbobek Lyesum логотипі">
-    </div>
-  
-    <!-- Тема -->
-    <button id="themeToggle" class="theme-toggle" aria-label="Теманы ауыстыру">
-      <i class="fas fa-moon"></i>
+<!-- Тема -->
+<button id="themeToggle" class="theme-toggle" aria-label="Теманы ауыстыру">
+  <i class="fas fa-moon"></i>
+</button>
+
+<main class="container fade-in">
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" 
+            onclick="switchTab('loan')"
+            role="tab"
+            aria-selected="true"
+            aria-controls="loan-tab"
+            data-tab="loan">
+      <i class="fas fa-money-check-alt"></i> Кредит
     </button>
-  
-    <main class="container fade-in">
+    <button class="tab-btn" 
+            onclick="switchTab('deposit')"
+            role="tab"
+            aria-selected="false"
+            aria-controls="deposit-tab"
+            data-tab="deposit">
+      <i class="fas fa-piggy-bank"></i> Депозит
+    </button>
+  </div>
 
-  <button id="themeToggle" class="theme-toggle" aria-label="Теманы ауыстыру">
-    <i class="fas fa-moon"></i>
-  </button>
+  <!-- Кредит -->
+  <section id="loan" class="card slide-up" role="tabpanel" aria-labelledby="loan-tab">
+    <h2><i class="fas fa-calculator"></i> Несие калькуляторы</h2>
+    
+    <form onsubmit="calculateLoan(); return false;">
+      <div class="input-group">
+        <label for="loanAmount">Несие сомасы (₸)</label>
+        <input type="number" id="loanAmount" value="1000000" min="1000" step="1000" required />
+      </div>
+      
+      <div class="input-group">
+        <label for="loanRate">Жылдық пайыз (%)</label>
+        <input type="number" id="loanRate" value="20" min="0" max="100" step="0.1" required />
+      </div>
+      
+      <div class="input-group">
+        <label for="loanMonths">Мерзім (ай)</label>
+        <input type="number" id="loanMonths" value="12" min="1" max="360" required />
+      </div>
+      
+      <div class="input-group">
+        <label for="income">Айлық табыс (₸)</label>
+        <input type="number" id="income" value="500000" min="0" step="1000" />
+      </div>
+      
+      <div class="input-group">
+        <label for="expenses">Айлық шығын (₸)</label>
+        <input type="number" id="expenses" value="200000" min="0" step="1000" />
+      </div>
+      
+      <button type="submit">Есептеу</button>
+    </form>
 
-  <main class="container fade-in">
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" 
-              onclick="switchTab('loan')"
-              role="tab"
-              aria-selected="true"
-              aria-controls="loan-tab"
-              data-tab="loan">
-        <i class="fas fa-money-check-alt"></i> Кредит
-      </button>
-      <button class="tab-btn" 
-              onclick="switchTab('deposit')"
-              role="tab"
-              aria-selected="false"
-              aria-controls="deposit-tab"
-              data-tab="deposit">
-        <i class="fas fa-piggy-bank"></i> Депозит
-      </button>
+    <div id="loanResult" class="result-card bounce-in" style="display: none;">
+      <h3>Нәтиже:</h3>
+      <div id="loanSummary"></div>
+      <div class="action-buttons">
+        <button id="exportBtn" class="action-btn">
+          <i class="fas fa-file-excel"></i> Excel жүктеу
+        </button>
+        <button id="printBtn" class="action-btn">
+          <i class="fas fa-print"></i> Басып шығару
+        </button>
+        <button id="toggleBtn" class="action-btn">
+          <i class="fas fa-chevron-down"></i> Жасыру
+        </button>
+      </div>
+      <h4><i class="fas fa-calendar-alt"></i> Төлем кестесі:</h4>
+      <div class="table-container">
+        <table id="paymentSchedule">
+          <thead>
+            <tr>
+              <th>Ай</th>
+              <th>Күні</th>
+              <th>Төлем</th>
+              <th>Пайыз</th>
+              <th>Негізгі</th>
+              <th>Қалған</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
+  </section>
 
-    <!-- Кредит -->
-    <section id="loan" class="card slide-up" role="tabpanel" aria-labelledby="loan-tab">
-      <h2><i class="fas fa-calculator"></i> Несие калькуляторы</h2>
-      
-      <form onsubmit="calculateLoan(); return false;">
-        <div class="input-group">
-          <label for="loanAmount">Несие сомасы (₸)</label>
-          <input type="number" id="loanAmount" value="1000000" min="1000" step="1000" required />
-        </div>
-        
-        <div class="input-group">
-          <label for="loanRate">Жылдық пайыз (%)</label>
-          <input type="number" id="loanRate" value="20" min="0" max="100" step="0.1" required />
-        </div>
-        
-        <div class="input-group">
-          <label for="loanMonths">Мерзім (ай)</label>
-          <input type="number" id="loanMonths" value="12" min="1" max="360" required />
-        </div>
-        
-        <div class="input-group">
-          <label for="income">Айлық табыс (₸)</label>
-          <input type="number" id="income" value="500000" min="0" step="1000" />
-        </div>
-        
-        <div class="input-group">
-          <label for="expenses">Айлық шығын (₸)</label>
-          <input type="number" id="expenses" value="200000" min="0" step="1000" />
-        </div>
-        
-        <button type="submit">Есептеу</button>
-      </form>
-
-      <div id="loanResult" class="result-card bounce-in" style="display: none;">
-        <h3>Нәтиже:</h3>
-        <div id="loanSummary"></div>
-        <div class="action-buttons">
-          <button id="exportBtn" class="action-btn">
-            <i class="fas fa-file-excel"></i> Excel жүктеу
-          </button>
-          <button id="printBtn" class="action-btn">
-            <i class="fas fa-print"></i> Басып шығару
-          </button>
-          <button id="toggleBtn" class="action-btn">
-            <i class="fas fa-chevron-down"></i> Жасыру
-          </button>
-        </div>
-        <h4><i class="fas fa-calendar-alt"></i> Төлем кестесі:</h4>
-        <div class="table-container">
-          <table id="paymentSchedule">
-            <thead>
-              <tr>
-                <th>Ай</th>
-                <th>Күні</th>
-                <th>Төлем</th>
-                <th>Пайыз</th>
-                <th>Негізгі</th>
-                <th>Қалған</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+  <!-- Депозит -->
+  <section id="deposit" class="card slide-up" role="tabpanel" aria-labelledby="deposit-tab" style="display: none;">
+    <h2><i class="fas fa-calculator"></i> Депозит калькуляторы</h2>
+    
+    <form onsubmit="calculateDeposit(); return false;">
+      <div class="input-group">
+        <label for="depositAmount">Салым сомасы (₸)</label>
+        <input type="number" id="depositAmount" value="1000000" min="1000" step="1000" required />
       </div>
-    </section>
-
-    <!-- Депозит -->
-    <section id="deposit" class="card slide-up" role="tabpanel" aria-labelledby="deposit-tab" style="display: none;">
-      <h2><i class="fas fa-calculator"></i> Депозит калькуляторы</h2>
       
-      <form onsubmit="calculateDeposit(); return false;">
-        <div class="input-group">
-          <label for="depositAmount">Салым сомасы (₸)</label>
-          <input type="number" id="depositAmount" value="1000000" min="1000" step="1000" required />
-        </div>
-        
-        <div class="input-group">
-          <label for="depositRate">Жылдық пайыз (%)</label>
-          <input type="number" id="depositRate" value="10" min="0" max="100" step="0.1" required />
-        </div>
-        
-        <div class="input-group">
-          <label for="depositMonths">Мерзім (ай)</label>
-          <input type="number" id="depositMonths" value="12" min="1" max="360" required />
-        </div>
-        
-        <div class="input-group">
-          <label for="monthlyAddition">Ай сайын қосымша (₸)</label>
-          <input type="number" id="monthlyAddition" value="0" min="0" step="1000" />
-        </div>
-        
-        <button type="submit">Есептеу</button>
-      </form>
-
-      <div id="depositResult" class="result-card bounce-in" style="display: none;">
-        <h3>Нәтиже:</h3>
-        <div id="depositSummary"></div>
-        <div class="action-buttons">
-          <button id="exportDepositBtn" class="action-btn">
-            <i class="fas fa-file-excel"></i> Excel жүктеу
-          </button>
-          <button id="printDepositBtn" class="action-btn">
-            <i class="fas fa-print"></i> Басып шығару
-          </button>
-          <button id="toggleDepositBtn" class="action-btn">
-            <i class="fas fa-chevron-down"></i> Жасыру
-          </button>
-        </div>
-        <h4><i class="fas fa-calendar-alt"></i> Өсу кестесі:</h4>
-        <div class="table-container">
-          <table id="depositSchedule">
-            <thead>
-              <tr>
-                <th>Ай</th>
-                <th>Күні</th>
-                <th>Қосылған</th>
-                <th>Пайыз</th>
-                <th>Жинақ</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+      <div class="input-group">
+        <label for="depositRate">Жылдық пайыз (%)</label>
+        <input type="number" id="depositRate" value="10" min="0" max="100" step="0.1" required />
       </div>
-    </section>
-  </main>
+      
+      <div class="input-group">
+        <label for="depositMonths">Мерзім (ай)</label>
+        <input type="number" id="depositMonths" value="12" min="1" max="360" required />
+      </div>
+      
+      <div class="input-group">
+        <label for="monthlyAddition">Ай сайын қосымша (₸)</label>
+        <input type="number" id="monthlyAddition" value="0" min="0" step="1000" />
+      </div>
+      
+      <button type="submit">Есептеу</button>
+    </form>
 
-  <script src="script.js"></script>
+    <div id="depositResult" class="result-card bounce-in" style="display: none;">
+      <h3>Нәтиже:</h3>
+      <div id="depositSummary"></div>
+      <div class="action-buttons">
+        <button id="exportDepositBtn" class="action-btn">
+          <i class="fas fa-file-excel"></i> Excel жүктеу
+        </button>
+        <button id="printDepositBtn" class="action-btn">
+          <i class="fas fa-print"></i> Басып шығару
+        </button>
+        <button id="toggleDepositBtn" class="action-btn">
+          <i class="fas fa-chevron-down"></i> Жасыру
+        </button>
+      </div>
+      <h4><i class="fas fa-calendar-alt"></i> Өсу кестесі:</h4>
+      <div class="table-container">
+        <table id="depositSchedule">
+          <thead>
+            <tr>
+              <th>Ай</th>
+              <th>Күні</th>
+              <th>Қосылған</th>
+              <th>Пайыз</th>
+              <th>Жинақ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+
+<button id="tasksButton" 
+style="position: fixed; 
+       bottom: 80px; 
+       right: 20px; 
+       background: #fff; 
+       color: #111; 
+       border: 2px solid #00bfa5; 
+       padding: 10px 14px; 
+       border-radius: 10px; 
+       font-weight: 500; 
+       z-index: 1000;
+       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+       cursor: pointer;">
+📚 Есептер
+</button>
+
+<script>
+// Функция для перехода на страницу задач
+document.getElementById('tasksButton').addEventListener('click', function() {
+  window.location.href = 'tasks.html';
+});
+</script>
+
 </body>
-</html>   
+</html>
